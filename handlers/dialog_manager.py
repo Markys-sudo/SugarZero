@@ -51,7 +51,6 @@ class DialogManager:
 # Ініціалізація менеджера діалогів
 dialog_manager = DialogManager(dialog)
 
-
 # Функція, яку треба реєструвати в Telegram як обробник текстових повідомлень
 async def dialog_mode(update, context):
     await dialog_manager.dialog_mode(update, context)

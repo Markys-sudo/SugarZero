@@ -11,7 +11,9 @@ class QuizHandler:
         self.logger = logger
 
     async def start(self, update, context):
-        self.dialog.mode = 'quiz'
+        user_id = update.effective_user.id
+        self.dialog.set_mode(user_id, 'quiz')
+
         context.user_data['quiz_score'] = 0
         await send_photo(update, context, 'quiz')
         msg = load_message('quiz')
@@ -28,7 +30,7 @@ class QuizHandler:
         user = callback.from_user
         user_id = user.id
 
-        self.dialog.mode = 'quiz'
+        self.dialog.set_mode(user_id, 'quiz')
 
         await callback.answer()  # завжди відповідаємо на callback_query
 

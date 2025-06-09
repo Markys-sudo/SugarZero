@@ -20,8 +20,7 @@ def register_all_handlers(app):
 
     #Talk
     app.add_handler(CommandHandler('talk', talk_command))
-    app.add_handler(CallbackQueryHandler(talk_button))
-
+    app.add_handler(CallbackQueryHandler(talk_button, pattern=r'^talk_'))
 
     #quiz
     # Команда /quiz
