@@ -44,6 +44,7 @@ async def gpt(update, context):
     await gpt_service.start_gpt(update, context)
 
 async def gpt_dialog(update, context):
+
     user_id = update.effective_user.id
     current_mode = dialog.get_mode(user_id)  # отримуємо поточний режим
     if current_mode != 'gpt':

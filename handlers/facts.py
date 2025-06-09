@@ -4,17 +4,19 @@ from utils.util import load_prompt, send_text_buttons, send_text, send_photo
 from utils.logger import log_user_action
 from handlers.main_menu import start
 
-
 class FactGenerator:
     def __init__(self, dialog):
         self.dialog = dialog
         self.prompt_key = "random_fact"
 
-#обробка команди /random (або іншої, яка запускає генерацію факту).
+    # Обробка команди /random (або іншої, яка запускає генерацію факту).
     async def handle_command(self, update, context):
+        user_id = update.effective_user.id
         text = update.message.text if update.message and update.message.text else ''
         log_user_action(update, f"написав: {text}")
-        self.dialog.mode = 'random_fact'
+
+        # Встановлюємо режим random_fact для користувача
+        self.dialog.set_mode(user_id, 'random_fact')
 
         await send_photo(update, context, 'fact')
 
@@ -24,14 +26,18 @@ class FactGenerator:
         except Exception as e:
             await self.handle_error(update, context, e)
 
-#обробка натискань кнопок у відповіді.
+    # Обробка натискань кнопок у відповіді.
     async def handle_button(self, update, context):
         query = update.callback_query
         await query.answer()
+        user_id = update.effective_user.id
         log_user_action(update, f"натиснув кнопку: {query.data}")
 
         if query.data == 'fact_random':
             try:
+                # Тут теж слід переконатися, що режим встановлений
+                self.dialog.set_mode(user_id, 'random_fact')
+
                 text = query.message.text if query.message and query.message.text else ''
                 answer = await self.generate_fact(text)
                 await self.send_response(update, context, answer)
@@ -39,21 +45,23 @@ class FactGenerator:
                 await self.handle_error(update, context, e)
 
         elif query.data == 'fact_start':
+            # Повернення в main режим при виході з режиму фактів
+            self.dialog.set_mode(user_id, 'main')
             await start(update, context)
 
-#виклик GPT через свій сервіс.
+    # Виклик GPT через свій сервіс.
     async def generate_fact(self, user_input: str) -> str:
         prompt = load_prompt(self.prompt_key)
         return await chatgpt.send_question(prompt, user_input)
 
-#надсилання тексту з кнопками.
+    # Надсилання тексту з кнопками.
     async def send_response(self, update, context, answer: str):
         await send_text_buttons(update, context, answer, {
             "fact_random": "Ще цікавий факт",
             "fact_start": "Закінчити"
         })
 
-# обробка помилок і логування.
+    # Обробка помилок і логування.
     async def handle_error(self, update, context, error: Exception):
         error_text = f"⚠️ Виникла помилка при генерації факту: {error}"
         await send_text(update, context, error_text)

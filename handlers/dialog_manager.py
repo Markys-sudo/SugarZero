@@ -8,6 +8,7 @@ class DialogManager:
     async def dialog_mode(self, update, context):
         user_id = update.effective_user.id
         mode = self.dialog.get_mode(user_id)
+        print(f"[DEBUG] dialog_mode for user {user_id} with mode {mode}")
         print(f"[DialogMode] User {user_id} mode = {mode}")
 
         if mode == 'random_fact':
