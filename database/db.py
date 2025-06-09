@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 
 def save_user(user):
-    conn = sqlite3.connect("bot.db")
+    conn = sqlite3.connect("database/bot.db")
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -27,7 +27,7 @@ def save_user(user):
     conn.close()
 
 def add_quiz_top(user, ranking):
-    conn = sqlite3.connect("bot.db")
+    conn = sqlite3.connect("database/bot.db")
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS ranking (
@@ -58,7 +58,7 @@ def add_quiz_top(user, ranking):
     conn.close()
 
 def get_top_users(limit=10):
-    conn = sqlite3.connect("bot.db")
+    conn = sqlite3.connect("database/bot.db")
     cur = conn.cursor()
     cur.execute("""
         SELECT username, first_name, ranking
@@ -71,7 +71,7 @@ def get_top_users(limit=10):
     return top_users
 
 def get_user_rank(user_id):
-    conn = sqlite3.connect("bot.db")
+    conn = sqlite3.connect("database/bot.db")
     cur = conn.cursor()
     cur.execute("""
         SELECT user_id, ranking
@@ -87,7 +87,7 @@ def get_user_rank(user_id):
     return None, len(all_rows)
 
 def add_favorite(user_id, recipe_text):
-    conn = sqlite3.connect("bot.db")
+    conn = sqlite3.connect("database/bot.db")
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS favorites (
@@ -109,7 +109,7 @@ def add_favorite(user_id, recipe_text):
     conn.close()
 
 def get_favorites(user_id):
-    conn = sqlite3.connect("bot.db")
+    conn = sqlite3.connect("database/bot.db")
     cur = conn.cursor()
     cur.execute("""
         SELECT recipe_text FROM favorites
