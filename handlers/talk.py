@@ -1,5 +1,5 @@
 from utils.util import load_prompt, load_message, send_text, send_text_buttons, send_photo
-from utils.logger import log_user_action, logger
+from utils.logger import log_user_action
 from services.dialog import dialog
 from services.gpt import chatgpt
 
@@ -9,7 +9,9 @@ class TalkHandler:
         self.dialog = dialog
 
     async def talk(self, update, context):
-        self.dialog.mode = 'talk'
+        user_id = update.effective_user.id
+        self.dialog.set_mode(user_id, 'talk')  # ✅ Правильне встановлення режиму
+
         msg = load_message('talk')
         await send_photo(update, context, 'talk')
         await send_text_buttons(update, context, msg, {
@@ -20,6 +22,7 @@ class TalkHandler:
         })
 
     async def talk_button(self, update, context):
+        user_id = update.effective_user.id
         callback = update.callback_query
         query_data = callback.data
 
@@ -31,7 +34,8 @@ class TalkHandler:
 
         prompt = load_prompt(query_data)
         self.chatgpt.set_prompt(prompt)
-        self.dialog.mode = 'talk'  # відповідний режим для діалогу
+
+        self.dialog.set_mode(user_id, 'talk')  # ✅ режим для конкретного користувача
 
     async def talk_dialog(self, update, context):
         text = update.message.text
@@ -40,16 +44,14 @@ class TalkHandler:
 
         log_user_action(update, f"написав у GPT-діалозі: {text}")
 
-        # Відправка тимчасового повідомлення
         my_msg = await send_text(update, context, '✍️ Набираємо відповідь...')
 
         try:
             answer = await self.chatgpt.add_message(text)
-            # Редагування попереднього повідомлення
             await my_msg.edit_text(answer)
         except Exception as e:
-            # Якщо GPT-4o впав — повідомляємо
             await my_msg.edit_text(f"⚠️ Виникла помилка при зверненні до GPT:\n{e}")
+
 
 talk_handler = TalkHandler(chatgpt, dialog)
 
@@ -57,7 +59,7 @@ async def talk_command(update, context):
     await talk_handler.talk(update, context)
 
 async def talk_button(update, context):
-    await talk_handler.callback_handler(update, context)
+    await talk_handler.talk_button(update, context)
 
 async def talk_dialog(update, context):
     await talk_handler.talk_dialog(update, context)
