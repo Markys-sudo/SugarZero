@@ -1,4 +1,4 @@
-# logger.py
+# utils/logger.py
 import logging
 import sys
 from config import LOG_FILE
