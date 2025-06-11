@@ -1,9 +1,11 @@
 from services.dialog import dialog
 from utils.util import send_text
+# from handlers.food_analysis import food_photo_handler
 
 class DialogManager:
     def __init__(self, dialog):
         self.dialog = dialog
+        # self.photo_food_handler = food_photo_handler
 
     async def dialog_mode(self, update, context):
         user_id = update.effective_user.id
@@ -21,8 +23,13 @@ class DialogManager:
         elif mode == 'quiz':
             from handlers.quiz import handle_quiz_answer
             await handle_quiz_answer(update, context)
-        elif mode == 'photo':
-            await self.photo_handler(update, context)
+        elif mode == 'photo_food':
+            await self.photo_food_handler.handle_photo(update, context)
+        elif mode == 'food_correction':
+            await self.photo_food_handler.handle_corrections(update, context)
+
+        # elif mode == 'photo':
+        #     await self.photo_handler(update, context)
         elif mode == 'recept':
             await self.recept_dialog(update, context)
         else:
@@ -39,10 +46,10 @@ class DialogManager:
         from handlers.talk import talk_dialog as td
         await td(update, context)
 
-    # async def photo_handler(self, update, context):
-    #     from handlers.photo import photo_handler as ph
-    #     await ph(update, context)
-    #
+    async def photo_handler(self, update, context):
+        from handlers.image_analysis import photo_mode_handler as ph
+        await ph(update, context)
+
     # async def recept_dialog(self, update, context):
     #     from handlers.recept import recept_dialog as rd
     #     await rd(update, context)

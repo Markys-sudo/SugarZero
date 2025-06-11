@@ -22,6 +22,12 @@ class ChatGptService:
 #             api_key=token
 #         )
 #         self.message_list = []
+    async def ask(self, prompt: str) -> str:
+        return await self.send_question("", prompt)
+
+    async def translate_text(self, text, target_language='en'):
+        prompt = f"Переклади цей текст на {target_language.upper()} мовою без пояснень:\n{text}"
+        return await self.ask(prompt)
 
     def set_prompt(self, prompt_text: str) -> None:
         self.message_list.clear()
@@ -51,26 +57,31 @@ class ChatGptService:
         ]
         return await self.send_message_list()
 
-    async def describe_image(self, file_path: str, prompt: str = "Опиши, що зображено на цьому фото українською мовою.") -> str:
-        # Визначаємо MIME-тип (важливо для правильного формату запиту)
-        mime_type, _ = mimetypes.guess_type(file_path)
-        if not mime_type:
-            mime_type = "image/jpeg"
+    async def describe_image(self, file_path: str,
+                             prompt: str = "Опиши, що зображено на цьому фото українською мовою.") -> str:
+        try:
+            mime_type, _ = mimetypes.guess_type(file_path)
+            if not mime_type:
+                mime_type = "image/jpeg"
 
-        # Читаємо і кодуємо зображення у base64
-        with open(file_path, "rb") as img_file:
-            b64_data = base64.b64encode(img_file.read()).decode("utf-8")
+            with open(file_path, "rb") as img_file:
+                b64_data = base64.b64encode(img_file.read()).decode("utf-8")
 
-        response = await self.client.chat.completions.create(
-            model=MODEL_GPT,
-            messages=[
-                {"role": "user", "content": [
-                    {"type": "text", "text": prompt},
-                    {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{b64_data}"}}
-                ]}
-            ],
-            max_tokens=800,
-        )
+            response = await self.client.chat.completions.create(
+                model=MODEL_GPT,
+                messages=[
+                    {"role": "user", "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{b64_data}"}}
+                    ]}
+                ],
+                max_tokens=800,
+            )
+
+            return response.choices[0].message.content
+
+        except Exception as e:
+            return f"Помилка при описі зображення: {e}"
 
         return response.choices[0].message.content
 

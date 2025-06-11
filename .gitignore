@@ -1,2 +1,4 @@
 /.env
 /.venv/
+/database/bot.db
+/logs/log_*.log
