@@ -31,7 +31,7 @@ async def photo_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
         photo_file = await context.bot.get_file(photo.file_id)
         await photo_file.download_to_drive(file_path)
         logger.info(f"[{user_id}] Фото збережено у {file_path}")
-        await send_text(update, context, "🧠 Аналізую фото через GPT...")
+        await send_text(update, context, "🧠 Аналізую фото...")
     except Exception as e:
         logger.exception(f"[{user_id}] ❌ Помилка при завантаженні фото: {e}")
         await send_text(update, context, "❌ Не вдалося завантажити фото. Спробуйте ще раз.")
