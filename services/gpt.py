@@ -17,9 +17,12 @@ class ChatGptService:
     #     self.message_list = []
 
     def __init__(self, token: str):
+        if not token:
+            raise ValueError("❌ TOKEN_GPT не встановлено. Перевір .env або Railway Variables")
+
         self.client = AsyncOpenAI(
+            api_key=token,
             http_client=httpx.AsyncClient(proxy=PROXY_GPT),
-            api_key=token
         )
         self.message_list = []
 
