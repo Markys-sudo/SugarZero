@@ -67,29 +67,82 @@ class NutritionService:
         except Exception:
             return f"❌ Помилка:\n{traceback.format_exc()}"
 
-
+    # def _format_summary(self, all_items: list) -> str:
+    #     total_calories = 0
+    #     lines = []
+    #
+    #     for item in all_items:
+    #         # 🧪 Додано перевірку, якщо item = [dict]
+    #         if isinstance(item, list) and len(item) == 1 and isinstance(item[0], dict):
+    #             item = item[0]
+    #
+    #         if not isinstance(item, dict):
+    #             continue  # або лог warning, якщо хочеш
+    #
+    #         name = item.get("name", "невідомо")
+    #         nutrients = item.get("nutrition", {}).get("nutrients", [])
+    #         calories = 0
+    #
+    #         for nutrient in nutrients:
+    #             if nutrient.get("name", "").lower() == "calories":
+    #                 calories = nutrient.get("amount", 0)
+    #                 break
+    #
+    #         total_calories += calories
+    #         lines.append(f"{name}: {int(calories)} ккал")
+    #
+    #     return "\n".join(lines) + f"\n\n🔢 Загалом: {int(total_calories)} ккал"
     def _format_summary(self, all_items: list) -> str:
         total_calories = 0
+        total_protein = 0
+        total_fat = 0
+        total_carbs = 0
         lines = []
 
         for item in all_items:
-            # 🧪 Додано перевірку, якщо item = [dict]
             if isinstance(item, list) and len(item) == 1 and isinstance(item[0], dict):
                 item = item[0]
 
             if not isinstance(item, dict):
-                continue  # або лог warning, якщо хочеш
+                continue
 
             name = item.get("name", "невідомо")
             nutrients = item.get("nutrition", {}).get("nutrients", [])
-            calories = 0
+
+            calories = protein = fat = carbs = 0
 
             for nutrient in nutrients:
-                if nutrient.get("name", "").lower() == "calories":
-                    calories = nutrient.get("amount", 0)
-                    break
+                name_lower = nutrient.get("name", "").lower()
+                amount = nutrient.get("amount", 0)
+
+                if name_lower == "calories":
+                    calories = amount
+                elif name_lower == "protein":
+                    protein = amount
+                elif name_lower == "fat":
+                    fat = amount
+                elif name_lower == "carbohydrates":
+                    carbs = amount
 
             total_calories += calories
-            lines.append(f"{name}: {int(calories)} ккал")
+            total_protein += protein
+            total_fat += fat
+            total_carbs += carbs
 
-        return "\n".join(lines) + f"\n\n🔢 Загалом: {int(total_calories)} ккал"
+            lines.append(
+                f"{name}:\n"
+                f"  🔥 {int(calories)} ккал\n"
+                f"  🥩 Б: {protein:.1f} г\n"
+                f"  🧈 Ж: {fat:.1f} г\n"
+                f"  🍞 В: {carbs:.1f} г"
+            )
+
+        summary = (
+            "\n".join(lines) +
+            f"\n\n🔢 Загалом:\n"
+            f"🔥 Калорії: {int(total_calories)} ккал\n"
+            f"🥩 Білки: {total_protein:.1f} г\n"
+            f"🧈 Жири: {total_fat:.1f} г\n"
+            f"🍞 Вуглеводи: {total_carbs:.1f} г"
+        )
+        return summary
