@@ -2,8 +2,8 @@ import json
 import os
 import asyncio
 from typing import Optional
-from config import CACH_FILE
-CACHE_FILE = CACH_FILE
+from config import CACHE_FILE
+CACHE_FILE = CACHE_FILE
 
 class NutritionCache:
     def __init__(self):
