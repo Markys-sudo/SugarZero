@@ -7,21 +7,22 @@ import mimetypes
 MODEL_GPT = "gpt-4o"
 
 class ChatGptService:
+    # def __init__(self, token: str):
+    #     token = "sk-proj-" + token[:3:-1] if token.startswith('gpt:') else token
+    #     self.client = AsyncOpenAI(
+    #         http_client=httpx.AsyncClient(proxy=PROXY_GPT),
+    #         api_key=token
+    #     )
+    #
+    #     self.message_list = []
+
     def __init__(self, token: str):
-        token = "sk-proj-" + token[:3:-1] if token.startswith('gpt:') else token
         self.client = AsyncOpenAI(
             http_client=httpx.AsyncClient(proxy=PROXY_GPT),
             api_key=token
         )
-
         self.message_list = []
 
-#     def __init__(self, token: str):
-#         self.client = AsyncOpenAI(
-#             http_client=httpx.AsyncClient(proxy=PROXY_GPT),
-#             api_key=token
-#         )
-#         self.message_list = []
     async def ask(self, prompt: str) -> str:
         return await self.send_question("", prompt)
 
