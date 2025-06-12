@@ -24,4 +24,11 @@ async def start(update, context):
         'recept': 'Кулінарний помічник',
     })
 
-    await update.message.reply_text("👋 Привіт! Обери опцію:", reply_markup=reply_markup)
+    # Уніфіковано обробляємо ситуацію message або callback
+    # message = update.message or (update.callback_query and update.callback_query.message)
+    # if message:
+    #     await message.reply_text("👋 Привіт! Обери опцію:", reply_markup=reply_markup)
+    # else:
+    #     await context.bot.send_message(chat_id=update.effective_user.id,
+    #                                    text="👋 Привіт! Обери опцію:",
+    #                                    reply_markup=reply_markup)
