@@ -67,24 +67,6 @@ class NutritionService:
         except Exception:
             return f"❌ Помилка:\n{traceback.format_exc()}"
 
-    def _format_summary(self, items: list[dict]) -> str:
-        total_calories = 0
-        lines = []
-
-        for item in items:
-            name = item.get("name", "невідомо")
-            nutrients = item.get("nutrition", {}).get("nutrients", [])
-            calories = 0
-
-            for nutrient in nutrients:
-                if nutrient.get("name", "").lower() == "calories":
-                    calories = nutrient.get("amount", 0)
-                    break
-
-            total_calories += calories
-            lines.append(f"{name}: {int(calories)} ккал")
-
-        return "\n".join(lines) + f"\n\n🔢 Загалом: {int(total_calories)} ккал"
 
     def _format_summary(self, all_items: list) -> str:
         total_calories = 0
