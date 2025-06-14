@@ -6,23 +6,16 @@ import mimetypes
 
 MODEL_GPT = "gpt-4o"
 
-class ChatGptService:
-    # def __init__(self, token: str):
-    #     token = "sk-proj-" + token[:3:-1] if token.startswith('gpt:') else token
-    #     self.client = AsyncOpenAI(
-    #         http_client=httpx.AsyncClient(proxy=PROXY_GPT),
-    #         api_key=token
-    #     )
-    #
-    #     self.message_list = []
+shared_http_client = httpx.AsyncClient(proxy=PROXY_GPT)
 
+class ChatGptService:
     def __init__(self, token: str):
         if not token:
             raise ValueError("❌ TOKEN_GPT не встановлено. Перевір .env або Railway Variables")
 
         self.client = AsyncOpenAI(
             api_key=token,
-            http_client=httpx.AsyncClient(proxy=PROXY_GPT),
+            http_client=shared_http_client,
         )
         self.message_list = []
 

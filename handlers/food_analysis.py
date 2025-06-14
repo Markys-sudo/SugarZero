@@ -4,7 +4,7 @@ import os
 import uuid
 from telegram import Update
 from telegram.ext import ContextTypes
-from utils.util import send_text
+from utils.util import send_text, load_prompt
 from services.gpt import chatgpt
 from services.nutrition_service import NutritionService
 from utils.logger import logger, log_user_action
@@ -43,12 +43,7 @@ async def photo_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await send_text(update, context, f"📝 Опис зображення:\n\n{description}")
 
     # GPT інгредієнти
-    prompt = (
-        "На основі цього опису страви сформуй список інгредієнтів англійською мовою, "
-        "один інгредієнт на рядок. Додай приблизну кількість. Формат повинен бути як: "
-        "'2 potatoes', '1 tsp ground black pepper', '1 tbsp olive oil'. "
-        "Без пояснень, тільки список."
-    )
+    prompt = load_prompt('food')
     ingredients_raw = await chatgpt.send_question(prompt, description)
     logger.info(f"[{user_id}] Список інгредієнтів (GPT):\n{ingredients_raw}")
     await send_text(update, context, f"🥦 Інгредієнти:\n{ingredients_raw}")
