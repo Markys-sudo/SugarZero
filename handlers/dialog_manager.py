@@ -1,7 +1,8 @@
 from services.dialog import dialog
 from utils.util import send_text
-from handlers.food_analysis import photo_mode_start, photo_mode_handler
 from handlers.recipe import recept_handler  # вже містить recept_dialog, button_recept тощо
+from handlers.food_analysis import photo_mode_handler, handle_edit_ingredients_input
+from handlers.food_diary import handle_food_entry_input
 
 class DialogManager:
     def __init__(self, dialog):
@@ -29,6 +30,12 @@ class DialogManager:
             await self.photo_food_handler.handle_corrections(update, context)
         elif mode == 'recept':
             await self.recept_handler.handle_dialog(update, context)
+        elif mode == 'edit_ingredients':
+            await handle_edit_ingredients_input(update, context)
+        elif mode == "adding_food_entry":
+            await handle_food_entry_input(update, context)
+
+
         else:
             await send_text(update, context, "📭 Невідомий режим. Введіть /start, щоб повернутись у меню.")
 

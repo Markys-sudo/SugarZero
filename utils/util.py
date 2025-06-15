@@ -3,6 +3,22 @@ from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
+
+async def send_text_buttons_edit(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, buttons: dict) -> Message:
+    if not isinstance(text, str):
+        text = str(text)
+    keyboard = [
+        [InlineKeyboardButton(str(value), callback_data=str(key))]
+        for key, value in buttons.items()
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    if update.callback_query and update.callback_query.message:
+        return await update.callback_query.message.edit_text(text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
+    elif update.message:
+        return await update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
+    else:
+        raise ValueError("Немає повідомлення, яке можна редагувати або на яке можна відповісти.")
+
 # надсилає в чат текстове повідомлення
 async def send_text(update, context, text):
     if update.message:

@@ -2,7 +2,7 @@ from services.dialog import dialog
 from services.gpt import chatgpt
 from utils.util import load_prompt, send_text_buttons, send_text, send_photo
 from utils.logger import log_user_action, dialog_logger
-from handlers.main_menu import start
+
 
 class FactGenerator:
     def __init__(self, dialog):
@@ -45,6 +45,7 @@ class FactGenerator:
                 await self.handle_error(update, context, e)
 
         elif query.data == 'fact_start':
+            from handlers.main_menu import start
             self.dialog.set_mode(user_id, 'main')
             dialog_logger.info(f"[{user_id}] Повернення до головного меню (режим main)")
             await start(update, context)
