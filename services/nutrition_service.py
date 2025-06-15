@@ -118,4 +118,5 @@ class NutritionService:
                 f"🧈 Жири: {total_fat:.1f} г\n"
                 f"🍞 Вуглеводи: {total_carbs:.1f} г"
         )
+        
         return summary
