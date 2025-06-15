@@ -2,7 +2,6 @@ from services.dialog import dialog
 from services.gpt import chatgpt
 from utils.util import load_prompt, load_message, send_text_buttons, send_text, send_photo
 from utils.logger import log_user_action, gpt_logger
-from handlers.main_menu import start
 from database.db import save_user, add_favorite, get_favorites  # твої функції
 
 class ReceptHandler:
@@ -80,6 +79,7 @@ class ReceptHandler:
                     await send_text(update, context, recipe)
 
         elif query.data == 'recept_end':
+            from handlers.main_menu import start
             self.dialog.set_mode(user_id, 'main')
             await start(update, context)
 

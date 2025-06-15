@@ -1,6 +1,6 @@
 from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, filters
 
-from handlers.main_menu import start
+from handlers.main_menu import start, main_button
 from handlers.facts import random_fact, button_fact
 from handlers.gpt_chat import gpt, gpt_dialog
 from handlers.talk import talk_button, talk_command, talk_dialog
@@ -27,7 +27,7 @@ def register_all_handlers(app):
 
     # Основне меню
     app.add_handler(CommandHandler("start", start))
-
+    app.add_handler(CallbackQueryHandler(main_button, pattern="^main_.*"))
     # Цікаві факти
     app.add_handler(CommandHandler('random', random_fact))
     app.add_handler(CallbackQueryHandler(button_fact, pattern="^fact_.*"))
