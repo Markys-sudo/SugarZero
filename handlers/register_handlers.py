@@ -59,7 +59,7 @@ def register_all_handlers(app):
     app.add_handler(MessageHandler(filters.PHOTO, unified_photo_handler))
     app.add_handler(CallbackQueryHandler(handle_edit_ingredients, pattern="^edit_ingredients$"))
     app.add_handler(CallbackQueryHandler(handle_add_to_diary, pattern="^add_to_diary$"))
-    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_edit_ingredients_input))
+    #app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_edit_ingredients_input))
 
     # Рецепти
     app.add_handler(CommandHandler('recept', recept))
