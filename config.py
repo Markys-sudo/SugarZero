@@ -1,10 +1,12 @@
-from dotenv import load_dotenv
 import os
 from datetime import datetime
 
-load_dotenv()
+if os.path.exists(".env"):
+    from dotenv import load_dotenv
+    load_dotenv()
+
 TOKEN_TG = os.getenv('TOKEN_TG')
-TOKEN_GPT= os.getenv('TOKEN_GPT')
+TOKEN_GPT = os.getenv('TOKEN_GPT')
 PROXY_GPT = os.getenv('PROXY_GPT')
 SPOONACULAR_API = os.getenv('SPOONACULAR_API_KEY')
 

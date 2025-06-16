@@ -16,6 +16,9 @@ async def photo_mode_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     dialog.set_mode(user_id, 'photo_mode')
     await send_text(update, context, "📸 Надішліть фото страви, я проаналізую її та порахую калорії.")
 
+
+nutrition = NutritionService()
+
 async def photo_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     log_user_action(update, "📸 Надіслав(-ла) фото для аналізу")
