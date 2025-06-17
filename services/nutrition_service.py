@@ -120,3 +120,58 @@ class NutritionService:
         )
         
         return summary
+
+    async def get_nutrition_data(self, ingredients: list[str], user_id: int = 0) -> dict[str, dict]:
+        results = {}
+
+        for ingredient in ingredients:
+            cached = await self.cache.get(ingredient)
+            if cached:
+                results[ingredient] = cached
+            else:
+                item = await self._fetch_from_api(ingredient, user_id)
+                if isinstance(item, dict):
+                    await self.cache.set(ingredient, item)
+                    results[ingredient] = item
+                else:
+                    raise ValueError(f"❌ Не вдалося отримати дані по '{ingredient}': {item}")
+
+        return results
+
+    async def get_nutrition_summary(self, ingredients_text: str, user_id: int = None) -> str:
+        try:
+            ingredients = [line.strip() for line in ingredients_text.splitlines() if line.strip()]
+            results = await self.get_nutrition_data(ingredients, user_id or 0)
+
+            total_calories = total_protein = total_fat = total_carbs = 0
+
+            for item in results.values():
+                nutrients = item.get("nutrition", {}).get("nutrients", [])
+                for nutrient in nutrients:
+                    name = nutrient.get("name", "").lower()
+                    amount = nutrient.get("amount", 0)
+
+                    if name == "calories":
+                        total_calories += amount
+                    elif name == "protein":
+                        total_protein += amount
+                    elif name == "fat":
+                        total_fat += amount
+                    elif name == "carbohydrates":
+                        total_carbs += amount
+
+            ingredients_formatted = "\n".join(f"• {item}" for item in ingredients)
+
+            return (
+                f"📋 Сьогодні:\n\n{ingredients_formatted}\n\n"
+                f"🔢 Загалом:\n"
+                f"🔥 Калорії: {int(total_calories)} ккал\n"
+                f"🥩 Білки: {total_protein:.1f} г\n"
+                f"🧈 Жири: {total_fat:.1f} г\n"
+                f"🍞 Вуглеводи: {total_carbs:.1f} г"
+            )
+
+        except Exception as e:
+            from utils.logger import dialog_logger
+            dialog_logger.exception(f"[{user_id}] Помилка у get_nutrition_summary: {e}")
+            return "⚠️ Не вдалося обчислити калорії."
